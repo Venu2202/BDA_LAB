@@ -1,0 +1,101 @@
+> use myvenu
+switched to db myvenu
+> db.student.drop()
+true
+> show collections
+> db.student.insert(
+... {id:1,studname:"dog",grade:"I",hobbies:"walking"})
+WriteResult({ "nInserted" : 1 })
+> db.student.insert( {id:2,studname:"cat",grade:"II",hobbies:"sleeping"})
+WriteResult({ "nInserted" : 1 })
+> db.student.insert( {id:3,studname:"frog",grade:"III",hobbies:"dancing"})
+WriteResult({ "nInserted" : 1 })
+> db.student.update({id:2,studname:"cat",grade:"II"},{$set:{hobbies:"skating"}},{upsert:true})
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+> db.student.find()
+{ "_id" : ObjectId("6427b53c1a57b194541ffa83"), "id" : 1, "studname" : "dog", "grade" : "I", "hobbies" : "walking" }
+{ "_id" : ObjectId("6427b56b1a57b194541ffa84"), "id" : 2, "studname" : "cat", "grade" : "II", "hobbies" : "skating" }
+{ "_id" : ObjectId("6427b58c1a57b194541ffa85"), "id" : 3, "studname" : "frog", "grade" : "III", "hobbies" : "dancing" }
+> db.student.find({studname:1,grade:0,_id:0,id:0})
+> db.student.find({},{studname:1,grade:0,_id:0,id:0})
+Error: error: {
+	"ok" : 0,
+	"errmsg" : "Projection cannot have a mix of inclusion and exclusion.",
+	"code" : 2,
+	"codeName" : "BadValue"
+}
+> db.student.find({},{studname:1,grade:1,_id:0,id:0})
+Error: error: {
+	"ok" : 0,
+	"errmsg" : "Projection cannot have a mix of inclusion and exclusion.",
+	"code" : 2,
+	"codeName" : "BadValue"
+}
+> db.student.find({},{studname:1,grade:1,_id:0})
+{ "studname" : "dog", "grade" : "I" }
+{ "studname" : "cat", "grade" : "II" }
+{ "studname" : "frog", "grade" : "III" }
+> db.student.find({$eq:"II"}).pretty()
+Error: error: {
+	"ok" : 0,
+	"errmsg" : "unknown top level operator: $eq",
+	"code" : 2,
+	"codeName" : "BadValue"
+}
+> db.student.find({grade:{$eq:"II"}}).pretty()
+{
+	"_id" : ObjectId("6427b56b1a57b194541ffa84"),
+	"id" : 2,
+	"studname" : "cat",
+	"grade" : "II",
+	"hobbies" : "skating"
+}
+> db.student.insert( {id:3,studname:"frog",grade:"II",hobbies:"dancing"})
+WriteResult({ "nInserted" : 1 })
+> db.student.find({grade:{$eq:"II"}}).pretty()
+{
+	"_id" : ObjectId("6427b56b1a57b194541ffa84"),
+	"id" : 2,
+	"studname" : "cat",
+	"grade" : "II",
+	"hobbies" : "skating"
+}
+{
+	"_id" : ObjectId("6427b9651a57b194541ffa86"),
+	"id" : 3,
+	"studname" : "frog",
+	"grade" : "II",
+	"hobbies" : "dancing"
+}
+> db.student.find().sort({studname:1}).pretty()
+{
+	"_id" : ObjectId("6427b56b1a57b194541ffa84"),
+	"id" : 2,
+	"studname" : "cat",
+	"grade" : "II",
+	"hobbies" : "skating"
+}
+{
+	"_id" : ObjectId("6427b53c1a57b194541ffa83"),
+	"id" : 1,
+	"studname" : "dog",
+	"grade" : "I",
+	"hobbies" : "walking"
+}
+{
+	"_id" : ObjectId("6427b58c1a57b194541ffa85"),
+	"id" : 3,
+	"studname" : "frog",
+	"grade" : "III",
+	"hobbies" : "dancing"
+}
+{
+	"_id" : ObjectId("6427b9651a57b194541ffa86"),
+	"id" : 3,
+	"studname" : "frog",
+	"grade" : "II",
+	"hobbies" : "dancing"
+}
+> ^C
+bye
+
